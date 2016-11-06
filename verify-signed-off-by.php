@@ -178,7 +178,7 @@ function get_commits($commits_url, $config)
     return $commits;
 }
 
-function process_commits($commits_url, $config, $opts, $commits)
+function process_commits($commits_url, $json, $config, $opts, $commits)
 {
     $happy = true;
     if (isset($config["ci-link-url"]) &&
@@ -198,6 +198,7 @@ function process_commits($commits_url, $config, $opts, $commits)
 
         $sha = $value->{"sha"};
         $message = $value->{"commit"}->{"message"};
+        $repo = $json->{"repository"}->{"full_name"};
         $status_url = "https://api.github.com/repos/$repo/statuses/$sha";
         $debug_message .= "examining commit index $i / sha $sha:\nstatus url: $status_url\n";
 
@@ -258,13 +259,13 @@ function process_commits($commits_url, $config, $opts, $commits)
     exit(0);
 }
 
-function process($json, $config, $opts, $repo, $value)
+function process($json, $config, $opts, $value)
 {
     $opts = fill_opts_from_keys($config, $opts, $value);
 
     $commits_url = $json->{"pull_request"}->{"commits_url"};
     $commits = get_commits($commits_url, $config);
-    process_commits($commits_url, $config, $opts, $commits);
+    process_commits($commits_url, $json, $config, $opts, $commits);
 }
 
 ##############################################################################
@@ -293,7 +294,7 @@ $opts = fill_opts_from_json($json);
 $repo = $json->{"repository"}->{"full_name"};
 foreach ($config["github"] as $key => $value) {
     if ($repo == $key) {
-        process($json, $config, $opts, $key, $value);
+        process($json, $config, $opts, $value);
 
         # process() will not return, but be paranoid anyway
         exit(0);
