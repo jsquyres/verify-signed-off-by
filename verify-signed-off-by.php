@@ -10,14 +10,15 @@
 
 ##############################################################################
 ##############################################################################
-# Fill in your configuration values in the verify-signed-off-config.inc file
+# Fill in your configuration values in the
+# verify-signed-off-by-config.inc file
 ##############################################################################
 ##############################################################################
 
-if (!is_file("verify-signed-off-config.inc")) {
-    my_die("Cannot find verify-signed-off.php's config file.");
+if (!is_file("verify-signed-off-by-config.inc")) {
+    my_die("Cannot find verify-signed-by-off.php's config file.");
 }
-require_once "verify-signed-off-config.inc";
+require_once "verify-signed-off-by-config.inc";
 
 ##############################################################################
 ##############################################################################
