@@ -209,11 +209,11 @@ function process_commits($commits_url, $json, $config, $opts, $commits)
         # Look for a Signed-off-by string in this commit
         if (preg_match("/Signed-off-by/", $message)) {
             $status["state"]       = "success";
-            $status["description"] = "This commit is signed off";
+            $status["description"] = "This commit is signed off. Yay!";
             $debug_message .= "This commit is signed off\n\n";
         } else {
             $status["state"]       = "failure";
-            $status["description"] = "This commit is not signed off";
+            $status["description"] = "This commit is not signed off.";
             $status["target_url"]  = $target_url;
             $debug_message .= "This commit is NOT signed off\n\n";
 
@@ -231,7 +231,7 @@ function process_commits($commits_url, $json, $config, $opts, $commits)
                 $status["description"] = "All commits signed off. Yay!";
             } else {
                 $status["state"]       = "failure";
-                $status["description"] = "Some commits not signed off";
+                $status["description"] = "Some commits not signed off.";
                 $status["target_url"]  = $target_url;
             }
             $final_message = $status["description"];
