@@ -26,6 +26,20 @@ require_once "verify-signed-off-by-config.inc";
 ##############################################################################
 ##############################################################################
 
+# For 4.3.0 <= PHP <= 5.4.0
+if (!function_exists('http_response_code')) {
+    function http_response_code($newcode = NULL) {
+        static $code = 200;
+        if ($newcode !== NULL) {
+            header("X-PHP-Response-Code: $newcode", true, $newcode);
+            if (!headers_sent()) {
+                $code = $newcode;
+            }
+        }
+        return $code;
+    }
+}
+
 function my_die($msg, $code = 400)
 {
     # Die with a non-200 error code
@@ -259,6 +273,31 @@ function process_commits($commits_url, $json, $config, $opts, $commits)
     exit(0);
 }
 
+function repo_matches($full_name, $key)
+{
+    if ($full_name == $key) {
+        return 1;
+    }
+
+    // Full wildcard
+    else if ($key == "*" ||
+             $key == "*/*") {
+        return 1;
+    }
+
+    // Partial wildcards
+    preg_match("/^(.+?)\/(.+)$/", $full_name, $name_matches);
+    preg_match("/^(.+?)\/(.+)$/", $key, $key_matches);
+    if ($key_matches[1] == "*" && $key_matches[2] == $name_matches[2]) {
+        return 1;
+    }
+    else if ($key_matches[2] == "*" && $key_matches[1] == $name_matches[1]) {
+        return 1;
+    }
+
+    return 0;
+}
+
 function process($json, $config, $opts, $value)
 {
     $opts = fill_opts_from_keys($config, $opts, $value);
@@ -293,7 +332,7 @@ $opts = fill_opts_from_json($json);
 # (e.g., "open-mpi/ompi").
 $repo = $json->{"repository"}->{"full_name"};
 foreach ($config["github"] as $key => $value) {
-    if ($repo == $key) {
+    if (repo_matches($repo, $key)) {
         process($json, $config, $opts, $value);
 
         # process() will not return, but be paranoid anyway
