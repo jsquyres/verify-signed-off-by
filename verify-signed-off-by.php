@@ -160,6 +160,14 @@ function open_curl($url, $config)
     # will follow them to get the content from the final location.
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
+    # Set CURLOPT_HTTPHEADER to include the authorization token, just
+    # in case this is a private repo.
+    $headers = array(
+        "Content-type: application/json",
+        "Authorization: token " . $config["auth_token"]
+    );
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
     return $ch;
 }
 
