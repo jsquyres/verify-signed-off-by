@@ -262,11 +262,6 @@ function process_commits($commits_url, $json, $config, $opts, $commits)
         # Send the results back to Github for this specific commit
         $ch = open_curl($status_url, $config);
         curl_setopt($ch, CURLOPT_POST, 1);
-        $headers = array(
-            "Content-type: application/json",
-            "Authorization: token " . $config["auth_token"]
-        );
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($status));
         $output = curl_exec($ch);
         curl_close($ch);
