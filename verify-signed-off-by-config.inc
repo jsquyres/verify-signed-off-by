@@ -34,8 +34,12 @@ function fill_config()
     # You almost certainly want "debug" set to 0 (or unset)
     $config["debug"] = 0;
 
-    # These are the allowed repos that we reply to
-    $config["github"]["jsquyres/signed-off-by-github-webhook"] = 1;
+    # These are the allowed repos that we reply to.  Valid values:
+    # - a full repo name, such as: jsquyres/signed-off-by-github-webhook
+    # - full wildcard: *
+    # - wildcard the username/org name: */signed-off-by-github-webhook
+    # - wildcard the repo name: */*
+    $config["github"]["jsquyres/*"] = 1;
 
     # Return the $config variable
     return $config;
